@@ -123,18 +123,40 @@ def verts_to_poslist(verts):
     return res
 
 
-def scale_point_to_vector(boxes, pixelscale=100, height=0, scale=np.array([1, 1, 1])):
+import numpy as np
+
+def scale_point_to_vector(approx, pixelscale=100, height=0, scale=np.array([1, 1, 1])):
     """
-    Scale point to vector
-    scales a point to a vector
-    @Param boxes
-    @Param scale
-    @Param height
+    将来自'outer_contours'函数的'approx'多边形顶点转换为向量，并根据给定的比例进行缩放。
+
+    参数:
+        @Param approx: 来自'outer_contours'函数的输出，即多边形顶点的坐标列表。
+        @Param pixelscale: 缩放因子，用于调整点的x和y坐标的大小，默认值为100。
+        @Param height: 设置转换后向量的z轴高度，默认为0。
+        @Param scale: 一个三维向量，用于对x, y, z三个维度分别进行缩放，默认为[1, 1, 1]。
+
+    返回:
+        包含所有转换后向量的新列表。
     """
+    # 如果approx为空，则直接返回空列表
+    if approx is None or len(approx) == 0:
+        return []
+
+    # 确保approx是numpy数组并移除多余的维度（如果是的话）
+    approx = np.squeeze(approx)
+
+    # 创建结果列表
     res = []
-    for box in boxes:
-        for pos in box:
-            res.extend([[(pos[0]) / pixelscale, (pos[1]) / pixelscale, height]])
+
+    # 遍历approx中的每个点，并按照指定的比例进行缩放
+    for pos in approx:
+        scaled_pos = np.array([
+            (pos[0] / pixelscale) * scale[0],  # X坐标缩放
+            (pos[1] / pixelscale) * scale[1],  # Y坐标缩放
+            height * scale[2]                  # Z坐标（高度）缩放
+        ])
+        res.append(scaled_pos)
+
     return res
 
 

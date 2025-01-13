@@ -166,7 +166,7 @@ if __name__ == "__main__":
 
         if not var or var.lower() == "yes" or var.lower() == "y":
             IO.clean_data_folder(data_folder)
-
+        # CAD - >  顶点坐标 面数据  floorplan_to_3dObject_in_blender.py 通过python api进行建模
         if len(floorplans) > 1:
             data_paths.append(execution.simple_single(f) for f in floorplans)
         else:

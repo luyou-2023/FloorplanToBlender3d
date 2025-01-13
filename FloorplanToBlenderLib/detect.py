@@ -61,27 +61,34 @@ def wall_filter(gray):
     return unknown
 
 
-def precise_boxes(detect_img, output_img=None, color=[100, 100, 0]):
+def precise_boxes(detect_img, output_img=None, color=[100, 100, 0], accuracy=0.02):
     """
     Detect corners with boxes in image with high precision
-    @Param detect_img image to detect from @mandatory
-    @Param output_img image for output
-    @Param color to set on output
-    @Return corners(list of boxes), output image
-    @source https://stackoverflow.com/questions/50930033/drawing-lines-and-distance-to-them-on-image-opencv-python
+
+    参数:
+        @Param detect_img: 必需参数，表示需要从中检测轮廓的二值化图像。
+        @Param output_img: 可选参数，默认为 None。如果提供，则会在该图像上绘制检测到的轮廓。
+        @Param color: 可选参数，默认为 [100, 100, 0]，用于设置绘制轮廓的颜色。
+        @Param accuracy: 多边形近似的精度，默认为 0.02。
+
+    返回:
+        @Return corners: 包含所有检测到的角点（多边形顶点）的列表。
+        @Return output_img: 如果提供了输出图像，则返回带有绘制轮廓的图像；如果没有提供，则返回 None。
     """
     res = []
 
-    contours, _ = cv2.findContours(
-        detect_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-    )
+    # 查找轮廓
+    contours, _ = cv2.findContours(detect_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for cnt in contours:
-        epsilon = const.PRECISE_BOXES_ACCURACY * cv2.arcLength(cnt, True)
+        # 计算近似多边形
+        epsilon = accuracy * cv2.arcLength(cnt, True)
         approx = cv2.approxPolyDP(cnt, epsilon, True)
-        if output_img is not None:
-            output_img = cv2.drawContours(output_img, [approx], 0, color)
-        res.append(approx)
+
+        if len(approx) >= 3:  # 确保至少有三个点构成多边形
+            if output_img is not None:
+                output_img = cv2.drawContours(output_img, [approx], -1, color, thickness=2)
+            res.append(approx)
 
     return res, output_img
 
