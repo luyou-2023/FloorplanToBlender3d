@@ -79,6 +79,7 @@ if __name__ == "__main__":
     floorplans = []
     image_paths = []
     program_path = os.path.dirname(os.path.realpath(__file__))
+    # floorplan_to_3dObject_in_blender.py
     blender_script_path = const.BLENDER_SCRIPT_PATH
     dialog.init()
     data_paths = list()
@@ -166,7 +167,7 @@ if __name__ == "__main__":
 
         if not var or var.lower() == "yes" or var.lower() == "y":
             IO.clean_data_folder(data_folder)
-        # CAD - >  顶点坐标 面数据  floorplan_to_3dObject_in_blender.py 通过python api进行建模
+        # CAD - >  顶点坐标 面数据
         if len(floorplans) > 1:
             data_paths.append(execution.simple_single(f) for f in floorplans)
         else:
@@ -176,6 +177,7 @@ if __name__ == "__main__":
     print("Creates blender project")
     print("")
 
+    # 面数据  floorplan_to_3dObject_in_blender.py 通过python api进行建模
     if isinstance(data_paths[0], list):
         for paths in data_paths:
             create_blender_project(paths)
